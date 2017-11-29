@@ -5,12 +5,12 @@ Order of events:
   Rotation and reflection function
   Random mover
   MCT data structure
-  MCTS algorithm w/random mover-evaluater
+  MCTS algorithm w/random mover-evaluator
     Search criteria function
     MCTS Backprop
     Sample move probabilities (to choose move)
   Full game automation
-  Replace random mover-evaluater w/Net
+  Replace random mover-evaluator w/Net
   Testing
     Play against random-mover
     Play against minimax
