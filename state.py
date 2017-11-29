@@ -31,45 +31,65 @@ class State:
 
     def legal_moves(self):
         move_states = []
-        for y1 in range(8):
-            for x1 in range(8):
-                origin = self.at(x1,y1)
-                if origin == self.friendly():
-
-                    for x2,y2 in self.adjacent_positions(x1,y1):
-                        target = self.at(x2,y2)
-                        if target == self.enemy():
-                            
-                            move_state = self.try_move(x1,y1,x2,y2)
-                            if not (move_state is None):
-                                move_states.append(move_state)
-
+        for y in range(8):
+            for x in range(8):
+                try:
+                    move_state = self.try_move(x,y)
+                except ValueError:
+                    continue
+                move_states.append(move_state)
         if len(move_states) == 0: move_states.append(self)
         return move_states
+
+    def try_move(self, origin_x, origin_y):
+        new_state = self.clone()
+        origin = self.at(origin_x, origin_y)
+        if origin != 0: 
+            raise ValueError('Origin occupied.')
+
+        changed = False
+        for adj_x, adj_y in self.adjacent_positions(origin_x, origin_y):
+            adj = self.at(adj_x, adj_y)
+            if adj != self.enemy(): continue
+            try:
+                new_state = new_state.ray_flip(origin_x, origin_y, adj_x, adj_y)
+            except ValueError:
+                continue
+            changed = True
+
+        if not changed: 
+            raise ValueError('No move found.')
+        new_state.to_move = self.enemy()
+        return new_state
 
     def adjacent_positions(self,x,y):
         positions = []
         for dy in [-1,0,1]:
             for dx in [-1,0,1]:
                 if dy == dx == 0: continue
-                positions.append([x+dx, y+dy])
+                if self.in_bounds(x+dx, y+dy):
+                    positions.append([x+dx, y+dy])
         return positions
 
-    def try_move(self, origin_x, origin_y, target_x, target_y):
+    def in_bounds(self,x,y):
+        return x >= 0 and x <= 7 and y >= 0 and y <= 7
+
+    def ray_flip(self, origin_x, origin_y, target_x, target_y):
+        #**ADD INBOUNDS CHECK
         new_state = self.clone()
+        new_state.set(origin_x, origin_y, self.friendly())
         dx = target_x - origin_x
         dy = target_y - origin_y
         piece = self.at(target_x, target_y)
-        while piece != 0:
+        while piece != self.friendly():
             if piece == self.enemy(): # flip piece
                 new_state.set(target_x, target_y, self.friendly())
-            elif piece == self.friendly(): # second face found
-                return None
+            elif piece == 0: # no end piece
+                raise ValueError('No bracketing piece.')
             target_x += dx
             target_y += dy
             piece = self.at(target_x, target_y)
         new_state.set(target_x, target_y, self.friendly())
-        new_state.to_move = self.enemy()
         return new_state
 
     def isomorphisms(self):
@@ -121,7 +141,8 @@ def main():
     for move_state in state.legal_moves():
         move_state.pretty_print()
 
-    state = state.try_move(3,4,4,4)
+    try_state = state.try_move(5,4)
+    if not (try_state is None): state = try_state
     print('Isomorphisms:')
     for iso in state.isomorphisms():
         iso.pretty_print()
