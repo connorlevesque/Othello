@@ -1,0 +1,18 @@
+
+Order of events:
+  Board state
+  Legal move function
+  Rotation and reflection function
+  Random mover
+  MCT data structure
+  MCTS algorithm w/random mover-evaluater
+    Search criteria function
+    MCTS Backprop
+    Sample move probabilities (to choose move)
+  Full game automation
+  Replace random mover-evaluater w/Net
+  Testing
+    Play against random-mover
+    Play against minimax
+    Play against alpha-beta
+  Multi game-automation

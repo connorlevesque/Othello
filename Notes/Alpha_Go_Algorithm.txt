@@ -1,0 +1,43 @@
+
+Neural Network (f)
+  
+  state => [move_probs], win_prob       
+
+  s => p,v
+
+
+MCTS
+
+  state => [move_probs], winner
+
+  s => pi,z
+
+
+
+  Given a state S
+  1. Run an MCTS following the search criteria
+  2. When you reach a leaf L, use the neural net to evaluate L
+  3. Backpropagate through the MCT
+  4. Reapeat steps 1-3 k times
+  5. Choose a move at S by sampling the move propabilities
+
+  Once a terminal state is reached:
+  Train the neural net on each state moved to in the game labeled with the tree's probabilities and evaluations for those states. (also train on all the rotations and reflections)
+
+  Play a bunch of games.
+
+
+Each edge (s,a) has               # (state, action)
+  P - prior probability
+  N - visit count
+  Q - action value
+  W - total action value <= ?
+
+Search criteria:
+  Q(s, a) + U(s, a), where U(s, a) ∝ P(s, a) / (1 + N(s, a))
+                                   ^only proportional b/c of exploration 
+                                    constant
+
+Remaining questions:
+  How does the search criteria work?
+  Do we toss out trees from previous games? 
