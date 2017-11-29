@@ -30,6 +30,7 @@ class State:
         return (self.to_move%2) + 1
 
     def legal_moves(self):
+        #TODO: make legal moves return coords of moves, not just board state
         move_states = []
         for y in range(8):
             for x in range(8):
@@ -39,12 +40,12 @@ class State:
                     continue
                 move_states.append(move_state)
         if len(move_states) == 0: move_states.append(self)
-        return move_states
+        return move_states #, list of xy pairs
 
     def try_move(self, origin_x, origin_y):
         new_state = self.clone()
         origin = self.at(origin_x, origin_y)
-        if origin != 0: 
+        if origin != 0:
             raise ValueError('Origin occupied.')
 
         changed = False
@@ -57,7 +58,7 @@ class State:
                 continue
             changed = True
 
-        if not changed: 
+        if not changed:
             raise ValueError('No move found.')
         new_state.to_move = self.enemy()
         return new_state
@@ -117,7 +118,7 @@ class State:
     def pretty_print(self):
         h_border = ' | | | | | | | | | |'
         v_border = '|'
-        print('\n   0 1 2 3 4 5 6 7     ', 
+        print('\n   0 1 2 3 4 5 6 7     ',
             self.player_symbol(self.to_move), ' to move')
         print(h_border)
         for y in range(8):
