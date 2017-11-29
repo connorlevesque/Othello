@@ -38,7 +38,8 @@ class State:
                     move_state = self.try_move(x,y)
                 except ValueError:
                     continue
-                move_states.append(move_state)
+                move_states.append(((x, y), move_state))
+
         if len(move_states) == 0: move_states.append(self)
         return move_states #, list of xy pairs
 
@@ -139,7 +140,8 @@ def main():
     print(state.board)
     state.pretty_print()
     print('Legal Moves:')
-    for move_state in state.legal_moves():
+    for pair in state.legal_moves():
+        move_state = pair[1]
         move_state.pretty_print()
 
     try_state = state.try_move(5,4)
