@@ -43,6 +43,7 @@ class State:
                             move_state = self.try_move(x1,y1,x2,y2)
                             if not (move_state is None):
                                 move_states.append(move_state)
+
         if len(move_states) == 0: move_states.append(self)
         return move_states
 
@@ -71,6 +72,29 @@ class State:
         new_state.to_move = self.enemy()
         return new_state
 
+    def isomorphisms(self):
+        reflections = [self, self.reflect('x'), self.reflect('y'), self.reflect('xy')]
+        rotations = []
+        for reflection in reflections:
+            rotations.append(reflection.rotate_clockwise())
+        return reflections + rotations
+
+    def reflect(self, axis):
+        reflection = State()
+        for y in range(8):
+            for x in range(8):
+                if   axis ==  'x': reflection.set(7-x,   y, self.at(x,y))
+                elif axis ==  'y': reflection.set(x,   7-y, self.at(x,y))
+                elif axis == 'xy': reflection.set(7-x, 7-y, self.at(x,y))
+        return reflection
+
+    def rotate_clockwise(self):
+        rotation = State()
+        for y in range(8):
+            for x in range(8):
+                rotation.set(7-y, x, self.at(x,y))
+        return rotation
+
     def pretty_print(self):
         h_border = '  | | | | | | | | | |'
         v_border = '|'
@@ -87,14 +111,19 @@ class State:
     def player_symbol(self,n):
         return { 0:'.', 1:'x', 2:'o' }[n]
 
+
 def main():
     state = State()
-    # state = state.try_move(3,4,4,4)
     print('Starting State:')
     print(state.board)
     state.pretty_print()
     print('Legal Moves:')
     for move_state in state.legal_moves():
         move_state.pretty_print()
+
+    state = state.try_move(3,4,4,4)
+    print('Isomorphisms:')
+    for iso in state.isomorphisms():
+        iso.pretty_print()
 
 if  __name__ =='__main__':main()
