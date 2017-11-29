@@ -89,7 +89,6 @@ class State:
             target_x += dx
             target_y += dy
             piece = self.at(target_x, target_y)
-        new_state.set(target_x, target_y, self.friendly())
         return new_state
 
     def isomorphisms(self):
@@ -116,17 +115,18 @@ class State:
         return rotation
 
     def pretty_print(self):
-        h_border = '  | | | | | | | | | |'
+        h_border = ' | | | | | | | | | |'
         v_border = '|'
-        print('    0 1 2 3 4 5 6 7')
+        print('\n   0 1 2 3 4 5 6 7     ', 
+            self.player_symbol(self.to_move), ' to move')
         print(h_border)
         for y in range(8):
-            print(y, v_border, end=' ')
+            print('', v_border, end=' ')
             for x in range(8):
                 p = self.at(x,y)
                 print(self.player_symbol(p), end=' ')
-            print(v_border)
-        print(h_border); print()
+            print(v_border, y, sep=' ')
+        print(h_border);
 
     def player_symbol(self,n):
         return { 0:'.', 1:'x', 2:'o' }[n]
@@ -146,5 +146,6 @@ def main():
     print('Isomorphisms:')
     for iso in state.isomorphisms():
         iso.pretty_print()
+
 
 if  __name__ =='__main__':main()
