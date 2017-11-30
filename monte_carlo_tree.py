@@ -32,33 +32,63 @@ class MonteCarloTreeEdge:
         return 'N: {}, W: {}, Q: {}, P: {}, a: {}'.format(self.N, self.W, self.Q, self.P, self.a)
 
 class MonteCarloTreeNode:
-    def __init__(self, state, evaluator):
+    def __init__(self, state, evaluator, parent_edge):
         self.state = state
         self.v = evaluator.evaluate_state(state)
+        self.parent_edge = parent_edge
         self.edges = []
         self.evaluator = evaluator
     def is_leaf(self):
         return not len(self.edges)
+
+    def choose_next_node(self):
+        # TODO: search criteria
+        return random.choice(self.edges).child_node
+
     def expand(self):
         for pair in self.state.legal_moves():
             new_state = pair[1]
             move = pair[0]
             # evaluate move using evaluator, store probability in new edge
-            new_edge = MonteCarloTreeEdge(self, MonteCarloTreeNode(new_state, self.evaluator), move, self.evaluator.get_move_probability(self.state, move))
+            new_node = MonteCarloTreeNode(new_state, self.evaluator, None)
+            new_edge = MonteCarloTreeEdge(self, new_node, move, self.evaluator.get_move_probability(self.state, move))
+            new_node.parent_edge = new_edge
             self.edges.append(new_edge)
-        self.backprop_to_root()
-# m = MonteCarloTreeEdge(0, 0, (2,4), .3592888009)
-# print(m)
-# for i in range(3):
-#     m.backprop_thru(1)
-# m.backprop_thru(0)
-# print(m)
+        #self.backprop_to_root()
+
+class MonteCarloTree:
+    def __init__(self, state, evaluator):
+        self.state = state
+        self.evaluator = evaluator
+        self.root = MonteCarloTreeNode(state, evaluator, None)
+    def perform_search(self):
+        cur_node = self.root
+        #print(cur_node)
+        print("\n\nSEARCHING")
+        while not cur_node.is_leaf():
+            cur_node.state.pretty_print()
+            cur_node = cur_node.choose_next_node()
+        # cur_node is leaf
+        cur_node.expand()
+        print("expanding:")
+        cur_node.state.pretty_print()
+        # begin backprop
+        cur_edge = cur_node.parent_edge
+        dw = cur_node.v
+        while cur_edge: # while cur_node isn't root
+            #print(cur_edge)
+            cur_edge.backprop_thru(dw)
+            cur_node = cur_edge.parent_node
+            cur_edge = cur_node.parent_edge
+
+
 s = State()
 net = FakeRandomNet()
-s.pretty_print()
-n = MonteCarloTreeNode(s, net)
-print(n.is_leaf())
-n.expand()
-print(n.is_leaf())
-for edge in n.edges:
-    edge.child_node.state.pretty_print()
+tree = MonteCarloTree(s, net)
+for i in range(400):
+    for edge in tree.root.edges:
+        print(edge)
+    tree.perform_search()
+for edge in tree.root.edges:
+    print(edge)
+
