@@ -12,9 +12,13 @@ class State:
         self.set(4,4,2)
 
     def at(self,x,y):
-        return self.board[y][x]
+        if not self.in_bounds(x,y): 
+            raise ValueError('Position out of bounds')
+        return int(self.board[y][x])
 
     def set(self,x,y,piece):
+        if not self.in_bounds(x,y): 
+            raise ValueError('Position out of bounds')
         self.board[y][x] = piece
 
     def clone(self):
@@ -91,6 +95,33 @@ class State:
             piece = self.at(target_x, target_y)
         return new_state
 
+    def has_moves_left(self):
+        #print('Moves left:')
+        first_moves = self.legal_moves()
+        #print(first_moves[0].pretty_print())
+        pass_one = torch.equal(self.board, first_moves[0].board)
+        if pass_one:
+            first_moves[0].to_move = first_moves[0].enemy()
+            second_moves = first_moves[0].legal_moves()
+            #print(second_moves[0].pretty_print())
+            pass_two = torch.equal(first_moves[0].board, second_moves[0].board)
+            if pass_two: return False
+        return True
+
+    def is_pass_state(self):
+        next_move = self.legal_moves[0]
+        return torch.equal(self.board, next_move.board)
+
+    def score(self):
+        result = [0,0,0] # winner, p1 score, p2 score
+        for y in range(8):
+            for x in range(8):
+                piece = self.at(x,y)
+                if piece != 0: result[piece] += 1
+        result[0] = 1 if result[1] > result[2] else 2
+        if result[1] == result[2]: result[0] = 0
+        return result
+
     def isomorphisms(self):
         reflections = [self, self.reflect('x'), self.reflect('y'), self.reflect('xy')]
         rotations = []
@@ -117,7 +148,7 @@ class State:
     def pretty_print(self):
         h_border = ' | | | | | | | | | |'
         v_border = '|'
-        print('\n   0 1 2 3 4 5 6 7     ', 
+        print('   0 1 2 3 4 5 6 7     ', 
             self.player_symbol(self.to_move), ' to move')
         print(h_border)
         for y in range(8):
@@ -126,7 +157,13 @@ class State:
                 p = self.at(x,y)
                 print(self.player_symbol(p), end=' ')
             print(v_border, y, sep=' ')
-        print(h_border);
+        print(h_border); print()
+
+    def print_score(self, with_winner=False):
+        score = self.score()
+        print(self.player_symbol(1),': ', score[1], sep='')
+        print(self.player_symbol(2),': ', score[2], sep='')
+        if with_winner: print(self.player_symbol(score[0]), 'wins!')
 
     def player_symbol(self,n):
         return { 0:'.', 1:'x', 2:'o' }[n]

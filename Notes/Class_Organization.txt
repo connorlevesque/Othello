@@ -1,0 +1,13 @@
+
+Game
+  has 2 players
+
+Players take states as input and output moves
+
+The game passes movestates between the players and monitors the states for completion
+
+
+
+Training class runs lots of games to train a NN player and store the associated weights.
+
+Through this model a NN player could play against itself.

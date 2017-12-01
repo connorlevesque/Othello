@@ -5,9 +5,9 @@ from player import Player
 class HumanPlayer(Player):
 
     def play_move(self, state):
-        while True:
-            x,y = self.read_move() 
+        while True: 
             try:
+                x,y = self.read_move()
                 move_state = state.try_move(x,y)
             except ValueError:
                 print('Please enter a valid move of the form: x y')
