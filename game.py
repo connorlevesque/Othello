@@ -1,3 +1,4 @@
+import torch
 from state import State
 from player import Player
 from random_player import RandomPlayer
@@ -9,16 +10,30 @@ class Game:
         self.player1 = player1
         self.player2 = player2
         self.state = State()
+        self.last_state = None
+        self.consecutive_passes = 0
 
     def play(self, log=False):
         if log: self.state.pretty_print()
-        while self.state.has_moves_left():
+        while self.is_over():
+            self.last_state = self.state
             if self.state.to_move == 1:
                 self.state = self.player1.play_move(self.state)
             else:
                 self.state = self.player2.play_move(self.state)
             if log: self.state.pretty_print()
         if log: self.state.print_score(with_winner=True)
+
+    def is_over(self):
+        return self.state.is_full() or self.has_moves_left()
+
+    def has_moves_left(self):
+        if self.last_state is None: return True
+        if torch.equal(self.state.board, self.last_state.board):
+            self.consecutive_passes += 1
+        else:
+            self.consecutive_passes = 0
+        return self.consecutive_passes < 2
 
 
 def main():

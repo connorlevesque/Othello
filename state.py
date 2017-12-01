@@ -4,6 +4,7 @@ class State:
 
     def __init__(self):
         self.to_move = 1
+        self.last_move = None
         self.board = torch.rand(8,8)
         self.board *= 0
         self.set(3,4,1)
@@ -24,6 +25,7 @@ class State:
     def clone(self):
         clone = State()
         clone.to_move = self.to_move
+        clone.last_move = self.last_move
         clone.board = self.board.clone()
         return clone
 
@@ -42,7 +44,10 @@ class State:
                 except ValueError:
                     continue
                 move_states.append(move_state)
-        if len(move_states) == 0: move_states.append(self)
+        if len(move_states) == 0:
+            pass_state = self.clone()
+            pass_state.to_move = self.enemy() 
+            move_states.append(pass_state)
         return move_states
 
     def try_move(self, origin_x, origin_y):
@@ -64,6 +69,7 @@ class State:
         if not changed: 
             raise ValueError('No move found.')
         new_state.to_move = self.enemy()
+        new_state.last_move = (origin_x, origin_y)
         return new_state
 
     def adjacent_positions(self,x,y):
@@ -95,22 +101,11 @@ class State:
             piece = self.at(target_x, target_y)
         return new_state
 
-    def has_moves_left(self):
-        #print('Moves left:')
-        first_moves = self.legal_moves()
-        #print(first_moves[0].pretty_print())
-        pass_one = torch.equal(self.board, first_moves[0].board)
-        if pass_one:
-            first_moves[0].to_move = first_moves[0].enemy()
-            second_moves = first_moves[0].legal_moves()
-            #print(second_moves[0].pretty_print())
-            pass_two = torch.equal(first_moves[0].board, second_moves[0].board)
-            if pass_two: return False
+    def is_full(self):
+        for y in range(8):
+            for x in range(8):
+                if self.at(x,y) == 0: return False
         return True
-
-    def is_pass_state(self):
-        next_move = self.legal_moves[0]
-        return torch.equal(self.board, next_move.board)
 
     def score(self):
         result = [0,0,0] # winner, p1 score, p2 score
@@ -130,7 +125,7 @@ class State:
         return reflections + rotations
 
     def reflect(self, axis):
-        reflection = State()
+        reflection = self.clone()
         for y in range(8):
             for x in range(8):
                 if   axis ==  'x': reflection.set(7-x,   y, self.at(x,y))
@@ -139,18 +134,22 @@ class State:
         return reflection
 
     def rotate_clockwise(self):
-        rotation = State()
+        rotation = self.clone()
         for y in range(8):
             for x in range(8):
                 rotation.set(7-y, x, self.at(x,y))
         return rotation
 
     def pretty_print(self):
-        h_border = ' | | | | | | | | | |'
+        h_border = ' | | | | | | | | | |    '
         v_border = '|'
-        print('   0 1 2 3 4 5 6 7     ', 
-            self.player_symbol(self.to_move), ' to move')
-        print(h_border)
+        print('   0 1 2 3 4 5 6 7       ', end='')
+        if self.last_move is None: 
+            print()
+        else: 
+            print(self.player_symbol(self.enemy()), 'at',
+                self.last_move[0], self.last_move[1])
+        print(h_border, self.player_symbol(self.to_move), 'to move')
         for y in range(8):
             print('', v_border, end=' ')
             for x in range(8):
