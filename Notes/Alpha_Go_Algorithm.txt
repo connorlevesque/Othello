@@ -1,7 +1,7 @@
 
 Neural Network (f)
-  
-  state => [move_probs], win_prob       
+
+  state => [move_probs], win_prob
 
   s => p,v
 
@@ -26,18 +26,25 @@ MCTS
 
   Play a bunch of games.
 
+# (s, a) = (state, action)
+Each Node in the search tree contains edges (s, a) for all legal actions a from that state s
+Each edge (s,a) stores the following info: [N(s, a), W(s, a), Q(s, a), P(s, a)]
+  P(s, a) - prior probability
+  N(s, a) - visit count
+  Q(s, a) - action value
+  W(s, a) - total action value <= ?
 
-Each edge (s,a) has               # (state, action)
-  P - prior probability
-  N - visit count
-  Q - action value
-  W - total action value <= ?
+Each simulation starts from he root state and iteratively selects moves that maximize the search criteria (see below), until a leaf node s' is encountered.
 
 Search criteria:
   Q(s, a) + U(s, a), where U(s, a) ∝ P(s, a) / (1 + N(s, a))
-                                   ^only proportional b/c of exploration 
+                                   ^only proportional b/c of exploration
                                     constant
+Once we hit a leaf, we expand and evaluate once by the network to generate prior probabilities and evaluation (P(s',·), V(s')) = f_theta(s'). in english, P(s') and V(s') is found by pushing the leaf's expansion through the net.
+Each edge that is traversed in this simulation is updated to increment it's visit count N(s, a) and to update its action value to the mean evaluations over this simulation:
+  Q(s, a) = 1/[N(s, a)*(sum(all evaluations v in the path from s to s'))]
+
 
 Remaining questions:
   How does the search criteria work?
-  Do we toss out trees from previous games? 
+  Do we toss out trees from previous games?
