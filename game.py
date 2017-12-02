@@ -24,17 +24,6 @@ class Game:
             if log: self.state.pretty_print()
         if log: self.state.print_score(with_winner=True)
 
-    # def is_over(self):
-    #     return self.state.is_full() or self.has_moves_left()
-
-    # def has_moves_left(self):
-    #     if self.last_state is None: return True
-    #     if torch.equal(self.state.board, self.last_state.board):
-    #         self.consecutive_passes += 1
-    #     else:
-    #         self.consecutive_passes = 0
-    #     return self.consecutive_passes < 2
-
 
 def main():
     h_player = HumanPlayer()
