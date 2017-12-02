@@ -2,6 +2,24 @@
 import random
 from state import State
 
+
+class Rollouter:
+    def get_move_probability(self, state, move):
+        return random.uniform(-1, 1)
+    def evaluate_state(self, state):
+        to_move = state.to_move
+        while not state.is_over():
+            state = random.choice(state.legal_moves())
+        #game is over
+        winner = state.score()[0]
+        if winner == to_move:
+            return 1
+        elif winner == 0:
+            return 0
+        else:
+            return -1
+
+
 class FakeRandomNet:
     def get_move_probability(self, state, move):
         return random.uniform(-1, 1)
@@ -26,9 +44,9 @@ class MonteCarloTreeEdge:
 
     # dw is the change in our W that we carry with us when backproping
     # i.e. it's the evaluation of the leaf node we expanded
-    def backprop_thru(self, dw, to_move):
+    def backprop_thru(self, dw, evaluated_player):
         self.N += 1
-        if to_move == self.who_moved:
+        if evaluated_player == self.who_moved:
             self.W += dw
         else:
             self.W -= dw
@@ -49,7 +67,7 @@ class MonteCarloTreeNode:
             # self.v = state.score()[0]
             self.v = 1
         self.v = evaluator.evaluate_state(state)
-        
+        #self.is_root = is_root
         self.parent_edge = parent_edge
         self.edges = []
         self.evaluator = evaluator
@@ -92,9 +110,10 @@ class MonteCarloTree:
         self.state = state
         self.evaluator = evaluator
         self.root = MonteCarloTreeNode(state, evaluator, None)
-        self.player_id = self.root.state.to_move 
+        self.working_root = self.root
+    
     def perform_search(self):
-        cur_node = self.root
+        cur_node = self.working_root
         #print(cur_node)
         #print("\n\nSEARCHING")
     
@@ -124,22 +143,43 @@ class MonteCarloTree:
             cur_edge.backprop_thru(dw, to_move)
             cur_node = cur_edge.parent_node
             cur_edge = cur_node.parent_edge
+    
+    def perform_n_searches(self, n):
+        for i in range(n):
+            self.perform_search()
+    
+    def choose_move(self):
+        return max(self.working_root.edges, key=lambda e: e.N).child_node
+    
+    def search_and_then_also_move(self, n):
+        self.perform_n_searches(n)
+        self.update_working_root(self.choose_move())
+        return self.choose_move().state
 
+    def update_working_root(self, node):
+        tree.working_root = node
+
+    def update_working_root_to(self, state):
+        next_move = State()
+        for edge in self.working_root.edges:
+            node = edge.child_node
+            if tensor.equal(state.board, node.state.board):
+                update_working_root(node)
+                return
 
 s = State()
 net = FakeRandomNet()
 tree = MonteCarloTree(s, net)
-for i in range(70):
-    for edge in tree.root.edges:
-        pass
-        #print(edge)
-    tree.perform_search()
-for edge in tree.root.edges:
-    print(edge)
 
+while not s.is_over():
+    s.pretty_print()
+    s = tree.search_and_then_also_move(5)
+s.pretty_print()
 
 """
 when you arrive at a state that is the end of the game, backprop the value as a hard win or loss value. do not expand. that is all. have a great day :)
 
 
 """
+
+
