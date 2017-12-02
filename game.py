@@ -3,7 +3,7 @@ from state import State
 from player import Player
 from random_player import RandomPlayer
 from human_player import HumanPlayer
-from 
+from mct_player import MCTPlayer 
 
 class Game:
 
@@ -27,9 +27,9 @@ class Game:
 
 
 def main():
-    h_player = HumanPlayer()
-    m_player = MCTPlayer()
-    game = Game(h_player, m_player)
+    player1 = RandomPlayer()
+    player2 = MCTPlayer()
+    game = Game(player1, player2)
     print()
     game.play(log=True)
 

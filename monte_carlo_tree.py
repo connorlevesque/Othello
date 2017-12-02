@@ -1,5 +1,6 @@
 #TODO: FINISH THIS
 import random
+import torch
 from state import State
 
 
@@ -138,8 +139,9 @@ class MonteCarloTree:
         to_move = cur_node.state.to_move
         while cur_edge: # while cur_node isn't root
             if hit_end:
-                print(cur_edge)
-                cur_edge.child_node.state.pretty_print()
+                #print(cur_edge)
+                pass
+                #cur_edge.child_node.state.pretty_print()
             cur_edge.backprop_thru(dw, to_move)
             cur_node = cur_edge.parent_node
             cur_edge = cur_node.parent_edge
@@ -157,16 +159,16 @@ class MonteCarloTree:
         return self.choose_move().state
 
     def update_working_root(self, node):
-        tree.working_root = node
+        self.working_root = node
 
     def update_working_root_to(self, state):
         next_move = State()
         for edge in self.working_root.edges:
             node = edge.child_node
-            if tensor.equal(state.board, node.state.board):
-                update_working_root(node)
+            if torch.equal(state.board, node.state.board):
+                self.update_working_root(node)
                 return
-
+"""
 s = State()
 net = FakeRandomNet()
 tree = MonteCarloTree(s, net)
@@ -175,6 +177,7 @@ while not s.is_over():
     s.pretty_print()
     s = tree.search_and_then_also_move(5)
 s.pretty_print()
+"""
 
 """
 when you arrive at a state that is the end of the game, backprop the value as a hard win or loss value. do not expand. that is all. have a great day :)

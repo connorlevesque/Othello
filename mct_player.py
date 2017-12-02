@@ -1,17 +1,19 @@
 import random
 from state import State
 from player import Player
-from monte_carlo_tree import MonteCarloTree, FakeRandomNet
+from monte_carlo_tree import MonteCarloTree, Rollouter
 
 class MCTPlayer(Player):
 
     def __init__(self):
-        self.tree = MonteCarloTree(Rollouter())
-        iterations = 50
+        self.tree = MonteCarloTree(State(), Rollouter())
+        self.iterations = 3
 
     def play_move(self, state):
-        return self.tree.search_and_then_also_move(iterations)
+        self.tree.update_working_root_to(state)
+        return self.tree.search_and_then_also_move(self.iterations)
 
+    
 
 def main():
     m_player = MCTPlayer()
