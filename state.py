@@ -47,6 +47,7 @@ class State:
         if len(move_states) == 0:
             pass_state = self.clone()
             pass_state.to_move = self.enemy() 
+            pass_state.last_move = None
             move_states.append(pass_state)
         return move_states
 
@@ -101,11 +102,18 @@ class State:
             piece = self.at(target_x, target_y)
         return new_state
 
+    def is_over(self):
+        return self.is_full() or self.has_no_moves_left()
+
     def is_full(self):
         for y in range(8):
             for x in range(8):
                 if self.at(x,y) == 0: return False
         return True
+
+    def has_no_moves_left(self):
+        next_state = self.legal_moves()[0]
+        return self.last_move is None and next_state.last_move is None
 
     def score(self):
         result = [0,0,0] # winner, p1 score, p2 score

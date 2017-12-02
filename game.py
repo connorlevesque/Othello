@@ -15,7 +15,7 @@ class Game:
 
     def play(self, log=False):
         if log: self.state.pretty_print()
-        while self.is_over():
+        while not self.state.is_over():
             self.last_state = self.state
             if self.state.to_move == 1:
                 self.state = self.player1.play_move(self.state)
@@ -24,16 +24,16 @@ class Game:
             if log: self.state.pretty_print()
         if log: self.state.print_score(with_winner=True)
 
-    def is_over(self):
-        return self.state.is_full() or self.has_moves_left()
+    # def is_over(self):
+    #     return self.state.is_full() or self.has_moves_left()
 
-    def has_moves_left(self):
-        if self.last_state is None: return True
-        if torch.equal(self.state.board, self.last_state.board):
-            self.consecutive_passes += 1
-        else:
-            self.consecutive_passes = 0
-        return self.consecutive_passes < 2
+    # def has_moves_left(self):
+    #     if self.last_state is None: return True
+    #     if torch.equal(self.state.board, self.last_state.board):
+    #         self.consecutive_passes += 1
+    #     else:
+    #         self.consecutive_passes = 0
+    #     return self.consecutive_passes < 2
 
 
 def main():
@@ -44,6 +44,7 @@ def main():
     game.state.set(4,5,1)
     game.state.set(5,4,1)
     game.state.set(5,5,1)
+    game.state.last_move = (4,4)
     print()
     game.play(log=True)
 
