@@ -8,16 +8,22 @@ class Rollouter:
     def get_move_probability(self, state, move):
         return random.uniform(-1, 1)
     def evaluate_state(self, state):
+        #print("---ROLLOUT--- from:")
+        #state.pretty_print()
         to_move = state.to_move
         while not state.is_over():
             state = random.choice(state.legal_moves())
         #game is over
         winner = state.score()[0]
+        #print("winner: {}".format(winner))
         if winner == to_move:
+            #print("eval: 1")
             return 1
         elif winner == 0:
+            #print("eval: 0")
             return 0
         else:
+            #print("eval: -1")
             return -1
 
 
@@ -82,8 +88,8 @@ class MonteCarloTreeNode:
 
 
     def choose_next_node(self):
-        #return self.edges[0].child_node
-        return max(self.edges, key=lambda e: e.calculate_U()).child_node
+        return self.edges[0].child_node
+        #return max(self.edges, key=lambda e: e.calculate_U()).child_node
         # return random.choice(self.edges).child_node
 
     def expand(self):
@@ -104,6 +110,16 @@ class MonteCarloTreeNode:
             new_edge = MonteCarloTreeEdge(self, new_node, new_node.state.last_move, self.evaluator.get_move_probability(self.state, new_node.state.last_move))
             new_node.parent_edge = new_edge
             self.edges.append(new_edge)
+
+    def __str__(self):
+        s = "" 
+        self.state.pretty_print()
+        for e in self.edges:
+            s += str(e)
+            s += '\n'
+        return s
+
+
 
 class MonteCarloTree:
     
@@ -133,34 +149,57 @@ class MonteCarloTree:
         #print("expanding:")
         #cur_node.state.pretty_print()
         # begin backprop
-
+        #print("hit a leaf, rolling out from:")
+        #cur_node.state.pretty_print()
+        
         cur_edge = cur_node.parent_edge
         dw = cur_node.v
         to_move = cur_node.state.to_move
-        while cur_edge: # while cur_node isn't root
+        #print("TOMOVE: {}".format(to_move))
+        #print("----------------BEGIN MCTS BACKPROP----------------")
+        #print("FROM STATE:")
+        #cur_node.state.pretty_print()
+        
+        while cur_edge and cur_edge.child_node != self.working_root: # while cur_node isn't root
+            
+            #print(cur_edge)
             if hit_end:
                 #print(cur_edge)
                 pass
                 #cur_edge.child_node.state.pretty_print()
             cur_edge.backprop_thru(dw, to_move)
             cur_node = cur_edge.parent_node
+            #cur_node.state.pretty_print()
             cur_edge = cur_node.parent_edge
+        #print("$$$--------working root's outgoing edges----------$$$")
+        for e in self.working_root.edges:
+            pass
+            #print(e)
+        #input("press ENTER to continue")
+
     
     def perform_n_searches(self, n):
         for i in range(n):
             self.perform_search()
     
     def choose_move(self):
+        
+        #print("choosing edge from:")
+        #for e in self.working_root.edges:
+            #print(e)
+
+        #print("chose:", max(self.working_root.edges, key=lambda e: e.N))
         return max(self.working_root.edges, key=lambda e: e.N).child_node
     
     def search_and_then_also_move(self, n):
         self.perform_n_searches(n)
-        self.update_working_root(self.choose_move())
-        return self.choose_move().state
+        new_node = self.choose_move()
+        self.update_working_root(new_node)
+        return new_node.state
 
     def update_working_root(self, node):
         self.working_root = node
-
+        #print("working root updated to \n", self.working_root)
     def update_working_root_to(self, state):
         next_move = State()
         for edge in self.working_root.edges:
@@ -185,4 +224,19 @@ when you arrive at a state that is the end of the game, backprop the value as a 
 
 """
 
+# testing 
 
+s = State()
+net = Rollouter()
+tree = MonteCarloTree(s, net)
+
+tree.search_and_then_also_move(5)
+#for e in tree.working_root.edges:
+#    print(e)
+"""
+for i in range(10):
+    tree.perform_search()
+tree.update_working_root(tree.choose_move())
+print("\n\n\n\n\n\n\n\n\n\n\n333333333333333333333333333\n\n\n\n\n\n\n\n\n\n\n")
+tree.perform_search()
+"""
