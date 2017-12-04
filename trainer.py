@@ -12,18 +12,24 @@ from tester import Tester
 class Trainer:
 
     def __init__(self):
+
+        self.evaluator = NetEvaluator()
+        self.net = self.evaluator.net
         self.tree = MonteCarloTree(State(), NetEvaluator())
-        self.net = self.tree.evaluator.net
         self.alpha = 0.01
         self.optimizer = optim.SGD(self.net.parameters(), lr=self.alpha)
         self.criterion = nn.MSELoss()
 
     def train(self, k, n):
-        for _ in range(k):
+        for i in range(k):
+            print(i)
             self.train_on_game(n)
-
+    def reset_tree(self):
+        self.tree = MonteCarloTree(State(), self.evaluator) 
+                
     def train_on_game(self, n):
-        print('playing game')
+        print('playin game')
+        self.reset_tree()
         self.tree.play_training_game(n)
         print('training on game')
         game_path = self.tree.game_path
@@ -47,19 +53,19 @@ class Trainer:
         return Variable(torch.FloatTensor(target))
 
 
-version = 1.1
+version = 2.0
 tester = Tester()
 trainer = Trainer()
-trainer.net.read_weights_from_file('./weights/weight_1.0_2017-12-04T12:12:12.758471')
-trainer.train(10, 5)
+#trainer.net.read_weights_from_file('./weights/weight_1.2_2017-12-04T13:00:44.134928')
+trainer.train(100, 10)
 print(trainer.net.layer_1.weight.data)
 print(trainer.net.layer_2.weight.data)
 print(trainer.net.layer_3.weight.data)
 
-tester.test_vs_random(trainer.net, 100)
+tester.test_vs_random(trainer.net, 500)
 
 ts = datetime.datetime.now().timestamp()
 readable = datetime.datetime.fromtimestamp(ts).isoformat()
-path = "/Users/connorlevesque/Desktop/School/Machine Learning/Othello/weights/weight_{}_{}".format(version, readable)
+path = "./weights/weight_{}_{}".format(version, readable)
 trainer.net.write_weights_to_file(path)
 
