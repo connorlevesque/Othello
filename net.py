@@ -11,7 +11,12 @@ class Net(nn.Module):
         self.layer_1 = nn.Linear(128, 84, True)
         self.layer_2 = nn.Linear(84, 84, True)
         self.layer_3 = nn.Linear(84, 65, True)
-        self.layers = [self.layer_1, self.layer_2, self.layer_3]
+
+    def write_weights_to_file(self, file):
+        torch.save(self.state_dict(), file)
+
+    def read_weights_from_file(self, file):
+        self.load_state_dict(torch.load(file))
 
     def forward(self, x):
         x = F.relu(self.layer_1(x))
@@ -19,12 +24,6 @@ class Net(nn.Module):
         x = F.relu(self.layer_3(x))
         return x
 
-    # def write_weights_to_file(self, file):
-    #     for layer in self.layers:
-    #         # write dimensions to file
-    #         for val in layer.weight.data:
-    #             # write value to file
-    #             # space separated
 
 # net = Net()
 # input_v = Variable(torch.randn(128))
