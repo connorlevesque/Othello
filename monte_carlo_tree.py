@@ -39,15 +39,21 @@ class NetEvaluator:
         self.output = None
 
     def get_move_probability(self, state, move):
-        if not state.equals(last_state):
-            self.output = net(state.convert_to_net_input)
-        x,y = move
-        return self.output.data[x+y*8]
-
+        self.update_output(state)
+        if move:
+            x,y = move
+            return self.output.data[x+y*8]
+        else:
+            return 0
+            
     def evaluate_state(self, state):
-        if not state.equals(last_state):
-            self.output = net(state.convert_to_net_input)
-        return self.output.data[65]
+        self.update_output(state)
+        return self.output.data[64]
+
+    def update_output(self, state):
+        if not (self.last_state and state.equals(last_state)):
+            self.output = self.net(state.convert_to_net_input())
+
 
 class MonteCarloTreeEdge:
     # might not need parent
@@ -228,6 +234,11 @@ class MonteCarloTree:
                 self.update_working_root(node)
                 return
 
+    def play_training_game(self, n):
+        while not self.working_root.state.is_over():
+            self.search_and_then_also_move(n)
+
+
 """
 s = State()
 net = FakeRandomNet()
@@ -262,14 +273,14 @@ print("\n\n\n\n\n\n\n\n\n\n\n333333333333333333333333333\n\n\n\n\n\n\n\n\n\n\n")
 tree.perform_search()
 """
 
-s = State()
-net = FakeRandomNet()
-tree = MonteCarloTree(s, net)
+# s = State()
+# net = FakeRandomNet()
+# tree = MonteCarloTree(s, net)
 
-for i in range(100):
-    if not tree.working_root.state.is_over():
-        tree.search_and_then_also_move(20)
-    else:
-        break
-for node in tree.game_path:
-    print(node)
+# for i in range(100):
+#     if not tree.working_root.state.is_over():
+#         tree.search_and_then_also_move(20)
+#     else:
+#         break
+# for node in tree.game_path:
+#     print(node)
