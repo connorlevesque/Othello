@@ -56,7 +56,7 @@ class Trainer:
 version = 2.0
 tester = Tester()
 trainer = Trainer()
-#trainer.net.read_weights_from_file('./weights/weight_1.2_2017-12-04T13:00:44.134928')
+trainer.net.read_weights_from_file('./weights/weight_1.1_2017-12-04T12:52:33.705910')
 trainer.train(100, 10)
 print(trainer.net.layer_1.weight.data)
 print(trainer.net.layer_2.weight.data)
@@ -68,4 +68,5 @@ ts = datetime.datetime.now().timestamp()
 readable = datetime.datetime.fromtimestamp(ts).isoformat()
 path = "./weights/weight_{}_{}".format(version, readable)
 trainer.net.write_weights_to_file(path)
+print('written to', path)
 
