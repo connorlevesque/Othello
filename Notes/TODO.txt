@@ -1,0 +1,13 @@
+
+Notesy note note
+
+Connor
+  Dual head net
+
+Max
+  Minimax + Alphaboy
+
+Speedup tree search
+
+Both
+  Train
