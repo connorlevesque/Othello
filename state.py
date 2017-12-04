@@ -1,4 +1,5 @@
 import torch
+from torch.autograd import Variable
 
 class State:
 
@@ -28,6 +29,11 @@ class State:
         clone.last_move = self.last_move
         clone.board = self.board.clone()
         return clone
+
+    def equals(self, other_state):
+        same_board = tensor.equal(self.board, other_state.board)
+        same_player = self.to_move == other_state.to_move
+        return same_board and same_player
 
     def friendly(self):
         return self.to_move
@@ -176,6 +182,7 @@ class State:
         return { 0:'.', 1:'x', 2:'o' }[n]
 
     def convert_to_net_input(self):
+
         l = [0]*128
         t1 = (0, 1, 0)
         t2 = (0, 0, 1)
@@ -183,11 +190,18 @@ class State:
         for row_i, row in enumerate(board_list):
             for col_i, elt in enumerate(row):
                 index = row_i*8 + col_i
+                
                 val = int(elt)
-                l[index*2] = t1[val]
-                l[index*2+1] = t2[val]
+                
+                if self.to_move == 1:
+                    l[index*2] = t1[val]
+                    l[index*2+1] = t2[val]
+                else:
+                    l[index*2] = t2[val]
+                    l[index*2+1] = t1[val]
                 # print("at index", index, "from", val, "adding", l[index*2], l[2*index+1])
-        return l
+        return Variable(torch.FloatTensor(l))
+
 
 def main():
     state2 = State()

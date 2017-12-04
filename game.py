@@ -1,9 +1,11 @@
 import torch
 from state import State
 from player import Player
+from net import Net
 from random_player import RandomPlayer
 from human_player import HumanPlayer
 from mct_player import MCTPlayer 
+from net_player import NetPlayer
 
 class Game:
 
@@ -27,8 +29,9 @@ class Game:
 
 
 def main():
-    player1 = RandomPlayer()
-    player2 = MCTPlayer()
+    net = Net()
+    player1 = NetPlayer(net)
+    player2 = NetPlayer(net)
     game = Game(player1, player2)
     print()
     game.play(log=True)

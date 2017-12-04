@@ -19,17 +19,17 @@ class Net(nn.Module):
         return x
 
 
-net = Net()
-input_v = Variable(torch.randn(128))
-target = Variable(torch.arange(0.0, 65.0))  # a dummy target, for example
-criterion = nn.MSELoss()
-optimizer = optim.SGD(net.parameters(), lr=0.01)
+# net = Net()
+# input_v = Variable(torch.randn(128))
+# target = Variable(torch.arange(0.0, 65.0))  # a dummy target, for example
+# criterion = nn.MSELoss()
+# optimizer = optim.SGD(net.parameters(), lr=0.01)
 
-for _ in range(1000):
-    optimizer.zero_grad()
-    output = net(input_v)
-    loss = criterion(output, target)
-    loss.backward()
-    optimizer.step()
+# for _ in range(1000):
+#     optimizer.zero_grad()
+#     output = net(input_v)
+#     loss = criterion(output, target)
+#     loss.backward()
+#     optimizer.step()
 
-print(output)
+# print(output)

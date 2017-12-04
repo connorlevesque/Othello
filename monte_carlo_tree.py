@@ -2,7 +2,7 @@
 import random
 import torch
 from state import State
-
+from net import Net
 
 class Rollouter:
     def get_move_probability(self, state, move):
@@ -26,12 +26,28 @@ class Rollouter:
             #print("eval: -1")
             return -1
 
-
 class FakeRandomNet:
     def get_move_probability(self, state, move):
         return random.uniform(-1, 1)
     def evaluate_state(self, state):
         return random.uniform(-1, 1)
+
+class NetEvaluator:
+    def __init__(self):
+        self.net = Net()
+        self.last_state = None
+        self.output = None
+
+    def get_move_probability(self, state, move):
+        if not state.equals(last_state):
+            self.output = net(state.convert_to_net_input)
+        x,y = move
+        return self.output.data[x+y*8]
+
+    def evaluate_state(self, state):
+        if not state.equals(last_state):
+            self.output = net(state.convert_to_net_input)
+        return self.output.data[65]
 
 class MonteCarloTreeEdge:
     # might not need parent
@@ -53,6 +69,7 @@ class MonteCarloTreeEdge:
     # i.e. it's the evaluation of the leaf node we expanded
     def backprop_thru(self, dw, evaluated_player):
         self.N += 1
+        # print("backproping:", self.N)
         if evaluated_player == self.who_moved:
             self.W += dw
         else:
@@ -88,8 +105,8 @@ class MonteCarloTreeNode:
 
 
     def choose_next_node(self):
-        return self.edges[0].child_node
-        #return max(self.edges, key=lambda e: e.calculate_U()).child_node
+        # return self.edges[0].child_node
+        return max(self.edges, key=lambda e: e.calculate_U()).child_node
         # return random.choice(self.edges).child_node
 
     def expand(self):
@@ -125,6 +142,7 @@ class MonteCarloTree:
     
     def __init__(self, state, evaluator):
         self.state = state
+        self.game_path = []
         self.evaluator = evaluator
         self.root = MonteCarloTreeNode(state, evaluator, None)
         self.working_root = self.root
@@ -132,7 +150,7 @@ class MonteCarloTree:
     def perform_search(self):
         cur_node = self.working_root
         #print(cur_node)
-        #print("\n\nSEARCHING")
+        # print("\n\nSEARCHING")
     
         while not cur_node.is_leaf():
             #if cur_node.is_game_over():
@@ -193,7 +211,9 @@ class MonteCarloTree:
     
     def search_and_then_also_move(self, n):
         self.perform_n_searches(n)
+        self.game_path.append(self.working_root)
         new_node = self.choose_move()
+        # print(new_node)
         self.update_working_root(new_node)
         return new_node.state
 
@@ -207,6 +227,7 @@ class MonteCarloTree:
             if torch.equal(state.board, node.state.board):
                 self.update_working_root(node)
                 return
+
 """
 s = State()
 net = FakeRandomNet()
@@ -226,11 +247,11 @@ when you arrive at a state that is the end of the game, backprop the value as a 
 
 # testing 
 
-s = State()
-net = Rollouter()
-tree = MonteCarloTree(s, net)
+# s = State()
+# net = Rollouter()
+# tree = MonteCarloTree(s, net)
 
-tree.search_and_then_also_move(5)
+# tree.search_and_then_also_move(5)
 #for e in tree.working_root.edges:
 #    print(e)
 """
@@ -240,3 +261,15 @@ tree.update_working_root(tree.choose_move())
 print("\n\n\n\n\n\n\n\n\n\n\n333333333333333333333333333\n\n\n\n\n\n\n\n\n\n\n")
 tree.perform_search()
 """
+
+s = State()
+net = FakeRandomNet()
+tree = MonteCarloTree(s, net)
+
+for i in range(100):
+    if not tree.working_root.state.is_over():
+        tree.search_and_then_also_move(20)
+    else:
+        break
+for node in tree.game_path:
+    print(node)
