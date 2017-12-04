@@ -47,10 +47,10 @@ class Trainer:
         return Variable(torch.FloatTensor(target))
 
 
-version = 1.1
+version = 1.2
 tester = Tester()
 trainer = Trainer()
-trainer.net.read_weights_from_file('./weights/weight_1.0_2017-12-04T12:12:12.758471')
+trainer.net.read_weights_from_file('./weights/weight_1.1_2017-12-04T12:52:33.705910')
 trainer.train(10, 5)
 print(trainer.net.layer_1.weight.data)
 print(trainer.net.layer_2.weight.data)
@@ -62,4 +62,5 @@ ts = datetime.datetime.now().timestamp()
 readable = datetime.datetime.fromtimestamp(ts).isoformat()
 path = "/Users/connorlevesque/Desktop/School/Machine Learning/Othello/weights/weight_{}_{}".format(version, readable)
 trainer.net.write_weights_to_file(path)
+print('written to', path)
 
