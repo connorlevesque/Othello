@@ -175,9 +175,26 @@ class State:
     def player_symbol(self,n):
         return { 0:'.', 1:'x', 2:'o' }[n]
 
+    def convert_to_net_input(self):
+        l = [0]*128
+        t1 = (0, 1, 0)
+        t2 = (0, 0, 1)
+        board_list = self.board.tolist()
+        for row_i, row in enumerate(board_list):
+            for col_i, elt in enumerate(row):
+                index = row_i*8 + col_i
+                val = int(elt)
+                l[index*2] = t1[val]
+                l[index*2+1] = t2[val]
+                # print("at index", index, "from", val, "adding", l[index*2], l[2*index+1])
+        return l
 
 def main():
-    state = State()
+    state2 = State()
+    print(state2.board)
+    l = state2.convert_to_net_input()
+    print(l[54], l[55], l[56], l[57])
+    state = State() 
     print('Starting State:')
     print(state.board)
     state.pretty_print()
@@ -190,6 +207,6 @@ def main():
     print('Isomorphisms:')
     for iso in state.isomorphisms():
         iso.pretty_print()
-
+    
 
 if  __name__ =='__main__':main()
