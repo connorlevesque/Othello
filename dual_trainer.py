@@ -60,15 +60,15 @@ class DualTrainer:
         return Variable(torch.FloatTensor(target))
 
 
-version = 3.0
-load = False
+version = 3.1
+load = True
 tester = Tester()
 trainer = DualTrainer()
 if load:
-    trainer.policy_net.read_weights_from_file('./weights/policy_1.2_2017-12-04T20:22:12.666147')
-    trainer.eval_net.read_weights_from_file('./weights/eval_1.2_2017-12-04T20:22:12.666147')
+    trainer.policy_net.read_weights_from_file('./weights/policy_3.1_2017-12-04T22:47:00.285417')
+    trainer.eval_net.read_weights_from_file('./weights/eval_3.1_2017-12-04T22:47:00.285417')
 
-trainer.train(10, 10)
+trainer.train(50, 1000)
 
 print('testing:')
 tester.test_vs_random(trainer.policy_net, 200)
