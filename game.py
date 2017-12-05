@@ -6,6 +6,7 @@ from random_player import RandomPlayer
 from human_player import HumanPlayer
 from mct_player import MCTPlayer 
 from net_player import NetPlayer
+from policy_net import PolicyNet
 
 class Game:
 
@@ -13,13 +14,10 @@ class Game:
         self.player1 = player1
         self.player2 = player2
         self.state = State()
-        self.last_state = None
-        self.consecutive_passes = 0
 
     def play(self, log=False):
         if log: self.state.pretty_print()
         while not self.state.is_over():
-            self.last_state = self.state
             if self.state.to_move == 1:
                 self.state = self.player1.play_move(self.state)
             else:
@@ -29,9 +27,10 @@ class Game:
 
 
 def main():
-    net = Net()
+    net = PolicyNet()
+    net.read_weights_from_file('./weights/policy_2.0_2017-12-04T21:08:08.381535')
+    player2 = HumanPlayer()
     player1 = NetPlayer(net)
-    player2 = NetPlayer(net)
     game = Game(player1, player2)
     print()
     game.play(log=True)

@@ -113,9 +113,10 @@ class MonteCarloTreeNode:
     def __init__(self, state, evaluator, parent_edge):
         self.state = state
         if state.is_over():
-            # self.v = state.score()[0]
-            self.v = 1
-        self.v = evaluator.evaluate_state(state)
+            windex = state.score()[0]
+            self.v = [0.5,1,0][windex]
+        else:
+            self.v = evaluator.evaluate_state(state)
         #self.is_root = is_root
         self.parent_edge = parent_edge
         self.edges = []
@@ -146,12 +147,13 @@ class MonteCarloTreeNode:
                 c = False
         """
         legals = self.state.legal_moves()
-        for new_state in legals:
+        self.edges = [None]*len(legals)
+        for i, new_state in enumerate(legals):
             # evaluate move using evaluator, store probability in new edge
             new_node = MonteCarloTreeNode(new_state, self.evaluator, None)
             new_edge = MonteCarloTreeEdge(self, new_node, new_node.state.last_move, self.evaluator.get_move_probability(self.state, new_node.state.last_move))
             new_node.parent_edge = new_edge
-            self.edges.append(new_edge)
+            self.edges[i] = new_edge
 
     def __str__(self):
         s = "" 
@@ -232,7 +234,7 @@ class MonteCarloTree:
             #print(e)
 
         #print("chose:", max(self.working_root.edges, key=lambda e: e.N))
-        return max(self.working_root.edges, key=lambda e: e.N).child_node
+        return max(self.working_root.edges, key=lambda e: e.Q).child_node
     
     def search_and_then_also_move(self, n):
         self.perform_n_searches(n)

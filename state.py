@@ -6,6 +6,7 @@ class State:
     def __init__(self):
         self.to_move = 1
         self.last_move = None
+        self.over = None
         self.board = torch.rand(8,8)
         self.board *= 0
         self.set(3,4,1)
@@ -42,19 +43,23 @@ class State:
         return (self.to_move%2) + 1
 
     def legal_moves(self):
-        move_states = []
+        move_states = [None]*60
+        i = 0
         for y in range(8):
             for x in range(8):
                 try:
                     move_state = self.try_move(x,y)
                 except ValueError:
                     continue
-                move_states.append(move_state)
+                move_states[i] = move_state
+                i += 1
+        if move_states[i] is None:
+            move_states = move_states[:i]
         if len(move_states) == 0:
             pass_state = self.clone()
             pass_state.to_move = self.enemy() 
             pass_state.last_move = None
-            move_states.append(pass_state)
+            move_states = [pass_state]
         return move_states
 
     def try_move(self, origin_x, origin_y):
@@ -80,12 +85,16 @@ class State:
         return new_state
 
     def adjacent_positions(self,x,y):
-        positions = []
+        positions = [[-1,-1]]*9
+        i = 0
         for dy in [-1,0,1]:
             for dx in [-1,0,1]:
                 if dy == dx == 0: continue
                 if self.in_bounds(x+dx, y+dy):
-                    positions.append([x+dx, y+dy])
+                    positions[i] = [x+dx, y+dy]
+                    i += 1
+        if positions[i][0] == -1:
+            positions = positions[:i]
         return positions
 
     def in_bounds(self,x,y):
@@ -109,7 +118,9 @@ class State:
         return new_state
 
     def is_over(self):
-        return self.is_full() or self.has_no_moves_left()
+        if self.over is None:
+            self.over = self.is_full() or self.has_no_moves_left()
+        return self.over
 
     def is_full(self):
         for y in range(8):
@@ -182,7 +193,6 @@ class State:
         return { 0:'.', 1:'x', 2:'o' }[n]
 
     def convert_to_net_input(self):
-
         l = [0]*128
         t1 = (0, 1, 0)
         t2 = (0, 0, 1)
@@ -204,23 +214,26 @@ class State:
 
 
 def main():
-    state2 = State()
-    print(state2.board)
-    l = state2.convert_to_net_input()
-    print(l[54], l[55], l[56], l[57])
-    state = State() 
-    print('Starting State:')
-    print(state.board)
-    state.pretty_print()
-    print('Legal Moves:')
-    for move_state in state.legal_moves():
-        move_state.pretty_print()
+    state = State()
+    print(state.adjacent_positions(2,2))
 
-    try_state = state.try_move(5,4)
-    if not (try_state is None): state = try_state
-    print('Isomorphisms:')
-    for iso in state.isomorphisms():
-        iso.pretty_print()
+    # state2 = State()
+    # print(state2.board)
+    # l = state2.convert_to_net_input()
+    # print(l[54], l[55], l[56], l[57])
+    # state = State() 
+    # print('Starting State:')
+    # print(state.board)
+    # state.pretty_print()
+    # print('Legal Moves:')
+    # for move_state in state.legal_moves():
+    #     move_state.pretty_print()
+
+    # try_state = state.try_move(5,4)
+    # if not (try_state is None): state = try_state
+    # print('Isomorphisms:')
+    # for iso in state.isomorphisms():
+    #     iso.pretty_print()
     
 
 if  __name__ =='__main__':main()
