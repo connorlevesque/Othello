@@ -16,8 +16,10 @@ class Game:
         self.state = State()
 
     def play(self, log=False):
+        self.player1.reset()
         if log: self.state.pretty_print()
         while not self.state.is_over():
+            self.state.pretty_print()
             if self.state.to_move == 1:
                 self.state = self.player1.play_move(self.state)
             else:
@@ -28,9 +30,10 @@ class Game:
 
 def main():
     net = PolicyNet()
+
     net.read_weights_from_file('./weights/policy_2.0_2017-12-04T21:08:08.381535')
-    player2 = HumanPlayer()
-    player1 = NetPlayer(net)
+    player2 = RandomPlayer()
+    player1 = MCTPlayer()
     game = Game(player1, player2)
     print()
     game.play(log=True)
