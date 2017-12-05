@@ -21,16 +21,15 @@ class DualTrainer:
 
     def train(self, k, n):
         for i in range(k):
+            print('game', i)
             self.train_on_game(n)
 
     def reset_tree(self):
         self.tree = MonteCarloTree(State(), self.evaluator) 
                 
     def train_on_game(self, n):
-        print('playin game')
         self.reset_tree()
         self.tree.play_training_game(n)
-        print('training on game')
         game_path = self.tree.game_path
         winner_int = self.tree.state.score()[0]
         winner_float = [0.5,1.0,0.0][winner_int]
@@ -61,15 +60,18 @@ class DualTrainer:
         return Variable(torch.FloatTensor(target))
 
 
-version = 1.0
+version = 3.0
+load = False
 tester = Tester()
 trainer = DualTrainer()
-#trainer.policy_net.read_weights_from_file('./weights/dual_1.1_2017-12-04T12:52:33.705910')
-#trainer.policy_net.read_weights_from_file('./weights/dual_1.1_2017-12-04T12:52:33.705910')
+if load:
+    trainer.policy_net.read_weights_from_file('./weights/policy_1.2_2017-12-04T20:22:12.666147')
+    trainer.eval_net.read_weights_from_file('./weights/eval_1.2_2017-12-04T20:22:12.666147')
+
 trainer.train(10, 10)
 
 print('testing:')
-tester.test_vs_random(trainer.policy_net, 500)
+tester.test_vs_random(trainer.policy_net, 200)
 
 ts = datetime.datetime.now().timestamp()
 readable = datetime.datetime.fromtimestamp(ts).isoformat()

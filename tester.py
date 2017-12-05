@@ -8,7 +8,8 @@ class Tester:
         player1 = NetPlayer(net)
         player2 = RandomPlayer()
         draws_wins1_wins2 = [0]*3
-        for _ in range(num_games):
+        for i in range(num_games):
+            print('test', i)
             game = Game(player1, player2)
             game.play()
             windex = game.state.score()[0]
