@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.optim as optim
-from state import State
+from state import State, move_dict
 from player import Player
 from monte_carlo_tree import MonteCarloTree, TwoNetEvaluator
 from tester import Tester
@@ -60,15 +60,15 @@ class DualTrainer:
         return Variable(torch.FloatTensor(target))
 
 
-version = 3.1
+version = 4.0
 load = True
 tester = Tester()
 trainer = DualTrainer()
 if load:
-    trainer.policy_net.read_weights_from_file('./weights/policy_3.1_2017-12-04T22:47:00.285417')
-    trainer.eval_net.read_weights_from_file('./weights/eval_3.1_2017-12-04T22:47:00.285417')
+    trainer.policy_net.read_weights_from_file('./weights/policy_4.0_2017-12-05T15:05:48.338484')
+    trainer.eval_net.read_weights_from_file('./weights/eval_4.0_2017-12-05T15:05:48.338484')
 
-trainer.train(50, 1000)
+trainer.train(5, 100)
 
 print('testing:')
 tester.test_vs_random(trainer.policy_net, 200)
@@ -81,4 +81,6 @@ eval_path = "./weights/eval_{}_{}".format(version, readable)
 trainer.eval_net.write_weights_to_file(eval_path)
 print('written to', policy_path)
 print('written to', eval_path)
+
+move_dict.save()
 

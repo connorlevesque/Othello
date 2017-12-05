@@ -43,6 +43,9 @@ class State:
         return (self.to_move%2) + 1
 
     def legal_moves(self):
+        return move_dict.get_legal_moves_for(self)
+
+    def search_for_legal_moves(self):
         move_states = [None]*60
         i = 0
         for y in range(8):
@@ -212,6 +215,9 @@ class State:
                 # print("at index", index, "from", val, "adding", l[index*2], l[2*index+1])
         return Variable(torch.FloatTensor(l))
 
+
+from legal_move_dict import LegalMoveDict
+move_dict = LegalMoveDict()
 
 def main():
     state = State()
