@@ -5,7 +5,7 @@ from mct_player import MCTPlayer
 class Tester:
 
     def test_vs_random(self, net, num_games):
-        player1 = NetPlayer(net)
+        player1 = MCTPlayer()
         player2 = RandomPlayer()
         draws_wins1_wins2 = [0]*3
         for i in range(num_games):
