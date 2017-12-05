@@ -53,20 +53,20 @@ class Trainer:
         return Variable(torch.FloatTensor(target))
 
 
-version = 2.0
-tester = Tester()
-trainer = Trainer()
-trainer.net.read_weights_from_file('./weights/weight_1.1_2017-12-04T12:52:33.705910')
-trainer.train(100, 10)
-print(trainer.net.layer_1.weight.data)
-print(trainer.net.layer_2.weight.data)
-print(trainer.net.layer_3.weight.data)
+# version = 2.0
+# tester = Tester()
+# trainer = Trainer()
+# trainer.net.read_weights_from_file('./weights/weight_1.1_2017-12-04T12:52:33.705910')
+# trainer.train(100, 10)
+# print(trainer.net.layer_1.weight.data)
+# print(trainer.net.layer_2.weight.data)
+# print(trainer.net.layer_3.weight.data)
 
-tester.test_vs_random(trainer.net, 500)
+# tester.test_vs_random(trainer.net, 500)
 
-ts = datetime.datetime.now().timestamp()
-readable = datetime.datetime.fromtimestamp(ts).isoformat()
-path = "./weights/weight_{}_{}".format(version, readable)
-trainer.net.write_weights_to_file(path)
-print('written to', path)
+# ts = datetime.datetime.now().timestamp()
+# readable = datetime.datetime.fromtimestamp(ts).isoformat()
+# path = "./weights/weight_{}_{}".format(version, readable)
+# trainer.net.write_weights_to_file(path)
+# print('written to', path)
 

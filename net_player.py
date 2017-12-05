@@ -23,7 +23,6 @@ class NetPlayer(Player):
                 best_state = next_state
         return best_state
 
-
 def main():
     m_player = MCTPlayer()
     state = State()

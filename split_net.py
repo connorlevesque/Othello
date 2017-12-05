@@ -96,24 +96,24 @@ class EvalHead(nn.Module):
         x = F.relu(self.layer_5(x))
         return x
 
-net = SplitNet()
-# print(list(net.parameters()))
-input_v = Variable(torch.randn(128))
-target_pol = Variable(torch.arange(0.0, 64.0))  # a dummy target, for example
-target_eval = Variable(torch.FloatTensor([64.0]))
-criterion = nn.MSELoss()
-optimizer = optim.SGD(net.parameters(), lr=0.01)
+# net = SplitNet()
+# # print(list(net.parameters()))
+# input_v = Variable(torch.randn(128))
+# target_pol = Variable(torch.arange(0.0, 64.0))  # a dummy target, for example
+# target_eval = Variable(torch.FloatTensor([64.0]))
+# criterion = nn.MSELoss()
+# optimizer = optim.SGD(net.parameters(), lr=0.01)
 
-for _ in range(10000):
-    optimizer.zero_grad()
-    out_pol, out_eval = net(input_v)
-    loss_pol = criterion(out_pol, target_pol)
-    loss_eval = criterion(out_eval, target_eval)
-    # torch.autograd.backward([loss_pol, loss_eval])
-    loss_pol.backward(retain_graph=True)
-    optimizer.step()
-    loss_eval.backward()
-    optimizer.step()
+# for _ in range(10000):
+#     optimizer.zero_grad()
+#     out_pol, out_eval = net(input_v)
+#     loss_pol = criterion(out_pol, target_pol)
+#     loss_eval = criterion(out_eval, target_eval)
+#     # torch.autograd.backward([loss_pol, loss_eval])
+#     loss_pol.backward(retain_graph=True)
+#     optimizer.step()
+#     loss_eval.backward()
+#     optimizer.step()
 
-print(out_pol)
-print(out_eval)
+# print(out_pol)
+# print(out_eval)

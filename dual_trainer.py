@@ -15,8 +15,8 @@ class DualTrainer:
         self.policy_net = self.evaluator.policy_net
         self.eval_net = self.evaluator.eval_net
         self.tree = MonteCarloTree(State(), self.evaluator)
-        self.policy_optimizer = optim.SGD(self.policy_net.parameters(), lr=0.01)
-        self.eval_optimizer = optim.SGD(self.eval_net.parameters(), lr=0.01)
+        self.policy_optimizer = optim.SGD(self.policy_net.parameters(), lr=0.3)
+        self.eval_optimizer = optim.SGD(self.eval_net.parameters(), lr=0.3)
         self.criterion = nn.MSELoss()
 
     def train(self, k, n):
@@ -60,27 +60,30 @@ class DualTrainer:
         return Variable(torch.FloatTensor(target))
 
 
-version = 4.0
-load = True
-tester = Tester()
-trainer = DualTrainer()
-if load:
-    trainer.policy_net.read_weights_from_file('./weights/policy_4.0_2017-12-05T15:05:48.338484')
-    trainer.eval_net.read_weights_from_file('./weights/eval_4.0_2017-12-05T15:05:48.338484')
+def main():
+    version = 6.1
+    load = True
+    tester = Tester()
+    trainer = DualTrainer()
+    if load:
+        trainer.policy_net.read_weights_from_file('./weights/policy_6.0_2017-12-05T17:19:39.388343')
+        trainer.eval_net.read_weights_from_file('./weights/eval_6.0_2017-12-05T17:19:39.388343')
 
-trainer.train(5, 100)
+    trainer.train(5, 100)
 
-print('testing:')
-tester.test_vs_random(trainer.policy_net, 200)
+    print('testing:')
+    tester.test_vs_random(trainer.policy_net, 200)
 
-ts = datetime.datetime.now().timestamp()
-readable = datetime.datetime.fromtimestamp(ts).isoformat()
-policy_path = "./weights/policy_{}_{}".format(version, readable)
-trainer.policy_net.write_weights_to_file(policy_path)
-eval_path = "./weights/eval_{}_{}".format(version, readable)
-trainer.eval_net.write_weights_to_file(eval_path)
-print('written to', policy_path)
-print('written to', eval_path)
+    ts = datetime.datetime.now().timestamp()
+    readable = datetime.datetime.fromtimestamp(ts).isoformat()
+    policy_path = "./weights/policy_{}_{}".format(version, readable)
+    trainer.policy_net.write_weights_to_file(policy_path)
+    eval_path = "./weights/eval_{}_{}".format(version, readable)
+    trainer.eval_net.write_weights_to_file(eval_path)
+    print('written to', policy_path)
+    print('written to', eval_path)
 
-move_dict.save()
+    print(100.0 * move_dict.keys_added / float(move_dict.keys_accessed), '% new keys')
+    move_dict.save()
 
+if  __name__ =='__main__':main()

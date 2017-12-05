@@ -86,7 +86,7 @@ class MonteCarloTreeEdge:
         self.P = probability
         self.a = action
         self.who_moved = parent_node.state.to_move
-        self.U_constant = 1
+        self.U_constant = 1.5
         self.parent_node = parent_node
         self.child_node = child_node
 
@@ -173,7 +173,11 @@ class MonteCarloTree:
         self.evaluator = evaluator
         self.root = MonteCarloTreeNode(state, evaluator, None)
         self.working_root = self.root
-    
+    def reset(self):
+        self.state = State()
+        self.game_path = []
+        self.root = MonteCarloTreeNode(self.state, self.evaluator, None)
+        self.working_root = self.root
     def perform_search(self):
         cur_node = self.working_root
         #print(cur_node)
@@ -234,6 +238,9 @@ class MonteCarloTree:
             #print(e)
 
         #print("chose:", max(self.working_root.edges, key=lambda e: e.N))
+        #if len(self.working_root.edges) ==0:
+            #print(self.working_root)
+            #print(self.working_root.is_game_over())
         return max(self.working_root.edges, key=lambda e: e.Q).child_node
     
     def search_and_then_also_move(self, n):
@@ -254,7 +261,7 @@ class MonteCarloTree:
             if torch.equal(state.board, node.state.board):
                 self.update_working_root(node)
                 return
-
+        
     def play_training_game(self, n):
         while not self.working_root.state.is_over():
             self.search_and_then_also_move(n)

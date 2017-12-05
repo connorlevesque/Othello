@@ -7,12 +7,13 @@ class MCTPlayer(Player):
 
     def __init__(self):
         self.tree = MonteCarloTree(State(), Rollouter())
-        self.iterations = 3
+        self.iterations = 2
 
     def play_move(self, state):
         self.tree.update_working_root_to(state)
         return self.tree.search_and_then_also_move(self.iterations)
-
+    def reset(self):
+        self.tree.reset()
     
 
 def main():

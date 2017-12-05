@@ -5,6 +5,8 @@ from state import State
 class LegalMoveDict:
 
     def __init__(self):
+        self.keys_added = 0
+        self.keys_accessed = 0
         file = open('./legal_moves.json')
         json_obj = json.load(file)
         self.dict = json.loads(json_obj)
@@ -18,9 +20,11 @@ class LegalMoveDict:
 
     def get_legal_moves_for(self, state):
         key = self.key_from(state)
+        self.keys_accessed += 1
         if self.dict.get(key, None) is None:
             legal_moves = state.search_for_legal_moves()
             self.dict[key] = list(map(self.key_from, legal_moves))
+            self.keys_added += 1
             return legal_moves
         return list(map(self.state_from, self.dict[key]))
 
