@@ -3,6 +3,8 @@ import random
 import torch
 from state import State
 from net import Net
+from policy_net import PolicyNet
+from eval_net import EvalNet
 
 class Rollouter:
     def get_move_probability(self, state, move):
@@ -45,7 +47,7 @@ class NetEvaluator:
             return self.output.data[x+y*8]
         else:
             return 0
-            
+
     def evaluate_state(self, state):
         self.update_output(state)
         return self.output.data[64]
@@ -53,6 +55,23 @@ class NetEvaluator:
     def update_output(self, state):
         if not (self.last_state and state.equals(last_state)):
             self.output = self.net(state.convert_to_net_input())
+
+class TwoNetEvaluator:
+    def __init__(self):
+        self.policy_net = PolicyNet()
+        self.eval_net = EvalNet()
+
+    def get_move_probability(self, state, move):
+        output = self.policy_net(state.convert_to_net_input())
+        if move:
+            x,y = move
+            return output.data[x+y*8]
+        else:
+            return 0
+            
+    def evaluate_state(self, state):
+        output = self.eval_net(state.convert_to_net_input())
+        return output.data[0]
 
 
 class MonteCarloTreeEdge:

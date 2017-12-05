@@ -33,7 +33,7 @@ class Trainer:
         self.tree.play_training_game(n)
         print('training on game')
         game_path = self.tree.game_path
-        winner = self.tree.state.score()[0]
+        winner = [0.5,1.0,0.0][self.tree.state.score()[0]]
         for node in game_path:
             if node.edges[0].a is None: continue
             input_v = node.state.convert_to_net_input()
