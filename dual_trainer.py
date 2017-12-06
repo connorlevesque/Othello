@@ -62,13 +62,13 @@ class DualTrainer:
 
 
 def main():
-    version = 8.3
+    version = 8.4
     load = True
     tester = Tester()
     trainer = DualTrainer()
     if load:
-        trainer.policy_net.read_weights_from_file('./weights/policy_8.2_2017-12-05T19:51:31.070740')
-        trainer.eval_net.read_weights_from_file('./weights/eval_8.2_2017-12-05T19:51:31.070740')
+        trainer.policy_net.read_weights_from_file('./weights/policy_8.3_2017-12-05T20:24:47.324320')
+        trainer.eval_net.read_weights_from_file('./weights/eval_8.3_2017-12-05T20:24:47.324320')
 
     trainer.train(5, 100)
 
