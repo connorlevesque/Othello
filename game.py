@@ -19,7 +19,6 @@ class Game:
         #self.player1.reset()
         if log: self.state.pretty_print()
         while not self.state.is_over():
-            self.state.pretty_print()
             if self.state.to_move == 1:
                 self.state = self.player1.play_move(self.state)
             else:

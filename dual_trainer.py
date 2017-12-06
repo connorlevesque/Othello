@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import datetime
 import torch
 import torch.nn as nn
@@ -15,8 +16,8 @@ class DualTrainer:
         self.policy_net = self.evaluator.policy_net
         self.eval_net = self.evaluator.eval_net
         self.tree = MonteCarloTree(State(), self.evaluator)
-        self.policy_optimizer = optim.SGD(self.policy_net.parameters(), lr=0.3)
-        self.eval_optimizer = optim.SGD(self.eval_net.parameters(), lr=0.3)
+        self.policy_optimizer = optim.SGD(self.policy_net.parameters(), lr=0.01)
+        self.eval_optimizer = optim.SGD(self.eval_net.parameters(), lr=0.01)
         self.criterion = nn.MSELoss()
 
     def train(self, k, n):
@@ -61,13 +62,13 @@ class DualTrainer:
 
 
 def main():
-    version = 6.1
+    version = 8.3
     load = True
     tester = Tester()
     trainer = DualTrainer()
     if load:
-        trainer.policy_net.read_weights_from_file('./weights/policy_6.0_2017-12-05T17:19:39.388343')
-        trainer.eval_net.read_weights_from_file('./weights/eval_6.0_2017-12-05T17:19:39.388343')
+        trainer.policy_net.read_weights_from_file('./weights/policy_8.2_2017-12-05T19:51:31.070740')
+        trainer.eval_net.read_weights_from_file('./weights/eval_8.2_2017-12-05T19:51:31.070740')
 
     trainer.train(5, 100)
 
@@ -85,5 +86,6 @@ def main():
 
     print(100.0 * move_dict.keys_added / float(move_dict.keys_accessed), '% new keys')
     move_dict.save()
+
 
 if  __name__ =='__main__':main()
