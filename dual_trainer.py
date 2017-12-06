@@ -62,13 +62,13 @@ class DualTrainer:
 
 
 def main():
-    version = 8.4
-    load = True
+    version = 10.0
+    load = False
     tester = Tester()
     trainer = DualTrainer()
     if load:
-        trainer.policy_net.read_weights_from_file('./weights/policy_8.3_2017-12-05T20:24:47.324320')
-        trainer.eval_net.read_weights_from_file('./weights/eval_8.3_2017-12-05T20:24:47.324320')
+        trainer.policy_net.read_weights_from_file('./weights/policy_9.0_2017-12-05T22:22:48.417341')
+        trainer.eval_net.read_weights_from_file('./weights/eval_9.0_2017-12-05T22:22:48.417341')
 
     trainer.train(5, 100)
 
@@ -85,7 +85,7 @@ def main():
     print('written to', eval_path)
 
     print(100.0 * move_dict.keys_added / float(move_dict.keys_accessed), '% new keys')
-    move_dict.save()
+    #move_dict.save()
 
 
 if  __name__ =='__main__':main()

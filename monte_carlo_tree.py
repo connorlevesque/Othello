@@ -209,7 +209,7 @@ class MonteCarloTree:
         #print("FROM STATE:")
         #cur_node.state.pretty_print()
         
-        while cur_edge and cur_edge.child_node != self.working_root: # while cur_node isn't root
+        while cur_edge and cur_edge.child_node != self.root: # while cur_node isn't root
             
             #print(cur_edge)
             if hit_end:
