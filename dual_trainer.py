@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import datetime
 import torch
 import torch.nn as nn
@@ -64,8 +64,16 @@ class DualTrainer:
 def main():
     version = 8.3
     load = True
-    tester = Tester()
     trainer = DualTrainer()
+    
+    ts = datetime.datetime.now().timestamp()
+    readable = datetime.datetime.fromtimestamp(ts).isoformat()
+    policy_path = "./weights/policy_{}_{}".format(version, readable)
+    eval_path = "./weights/eval_{}_{}".format(version, readable)
+
+    
+    log_file = open("./logs/{}_{}.log".format(version, readable), 'w')
+    tester = Tester(log=log_file)
     if load:
         trainer.policy_net.read_weights_from_file('./weights/policy_8.2_2017-12-05T19:51:31.070740')
         trainer.eval_net.read_weights_from_file('./weights/eval_8.2_2017-12-05T19:51:31.070740')
@@ -75,17 +83,15 @@ def main():
     print('testing:')
     tester.test_vs_random(trainer.policy_net, 200)
 
-    ts = datetime.datetime.now().timestamp()
-    readable = datetime.datetime.fromtimestamp(ts).isoformat()
-    policy_path = "./weights/policy_{}_{}".format(version, readable)
     trainer.policy_net.write_weights_to_file(policy_path)
-    eval_path = "./weights/eval_{}_{}".format(version, readable)
     trainer.eval_net.write_weights_to_file(eval_path)
     print('written to', policy_path)
     print('written to', eval_path)
+    log_file.write("written to: {}\nwritten to: {}".format(policy_path, eval_path))
 
     print(100.0 * move_dict.keys_added / float(move_dict.keys_accessed), '% new keys')
+    log_file.write("{}% new keys".format(100.0 * move_dict.keys_added / float(move_dict.keys_accessed)))
     move_dict.save()
-
+    log_file.close()
 
 if  __name__ =='__main__':main()

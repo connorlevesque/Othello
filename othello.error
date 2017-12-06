@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/clevesque/Othello/dual_trainer.py", line 10, in <module>
+    from tester import Tester
+  File "/home/clevesque/Othello/tester.py", line 28
+    with f as open(self.log_file, 'w'):
+        ^
+SyntaxError: can't assign to function call
