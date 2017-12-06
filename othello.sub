@@ -1,0 +1,8 @@
+executable = dual_trainer.py
+queue 1
+getenv = True
+log = othello.log
+error = othello.error
+notification = Always
+notify_user = clevesque@middlebury.edu
+requirements = TARGET.UidDomain == "cs.middlebury.edu" && TARGET.FileSystemDomain == "cs.middlebury.edu"
