@@ -178,6 +178,10 @@ class MonteCarloTree:
         self.game_path = []
         self.root = MonteCarloTreeNode(self.state, self.evaluator, None)
         self.working_root = self.root
+    
+    def reset_root(self):
+        self.working_root = self.root
+
     def perform_search(self):
         cur_node = self.working_root
         #print(cur_node)
