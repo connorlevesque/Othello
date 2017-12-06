@@ -25,7 +25,7 @@ class Tester:
         print('draws_wins1_wins2 =', draws_wins1_wins2)
         print('p1 win% = ', win_percent, '%', sep='')
         if self.log_file:
-            with f as open(self.log_file, 'w'):
+            with open(self.log_file, 'w') as f:
                 f.write("draws_wins1_wins2 = {}\np1 win% = {}%".format(draws_wins1_wins2, win_percent))
                 f.close()
 
