@@ -1,0 +1,2 @@
+executable = dual_trainer.py
+queue 1
