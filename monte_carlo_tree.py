@@ -104,6 +104,12 @@ class MonteCarloTreeEdge:
         self.Q = float(self.W)/float(self.N)
     def calculate_U(self):
         return self.U_constant * self.P/(1 + self.N)
+    '''
+        if self.parent_node.parent_edge:
+            pN = self.parent_node.parent_edge.N
+        else:
+            pN = 1
+        return self.U_constant * self.P *(math.sqrt(pN) / (1 + self.N))'''
     def __str__(self):
         return 'N: {}, W: {}, Q: {}, P: {}, a: {}, U: {}'.format(self.N, self.W, self.Q, self.P, self.a, self.calculate_U())
 

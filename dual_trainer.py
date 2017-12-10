@@ -87,12 +87,12 @@ def main():
     trainer.eval_net.write_weights_to_file(eval_path)
     print('written to', policy_path)
     print('written to', eval_path)
-    log_file.write("written to: {}\nwritten to: {}".format(policy_path, eval_path))
+    log_file.write("written to: {}\nwritten to: {}\n".format(policy_path, eval_path))
 
     print(100.0 * move_dict.keys_added / float(move_dict.keys_accessed), '% new keys')
     #move_dict.save()
 
-    log_file.write("{}% new keys".format(100.0 * move_dict.keys_added / float(move_dict.keys_accessed)))
+    log_file.write("{}% new keys\n".format(100.0 * move_dict.keys_added / float(move_dict.keys_accessed)))
     move_dict.save()
     log_file.close()
 

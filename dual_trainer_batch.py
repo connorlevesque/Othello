@@ -40,8 +40,8 @@ class DualTrainerBatch:
     
     def train_on_batch(self, batch):
         print("------Begin Training------")
-        for i in len(batch):
-            print("Training batch {}".format(i))
+        for i in range(len(batch)):
+            print("Training on game {}".format(i))
             game = batch[i]
             path = game[1]
             target_eval = game[0]
@@ -75,7 +75,7 @@ class DualTrainerBatch:
 
 
 def main():
-    version = 10.0
+    version = 1000
     load = False
     trainer = DualTrainerBatch()
     
@@ -85,35 +85,45 @@ def main():
     eval_path = "./weights/eval_{}_{}".format(version, readable)
 
     
-    #log_file = open("./logs/{}_{}.log".format(version, readable), 'w')
-    tester = Tester()
+    log_filename = "./logs/{}_{}.log".format(version, readable)
+    
+    with open(log_filename, 'w+') as f:
+        f.write("hello\n")
+        f.close()
+    
+    tester = Tester(log=log_filename)
     if load:
         trainer.policy_net.read_weights_from_file('./weights/policy_10.0_2017-12-06T00:04:33.437222')
         trainer.eval_net.read_weights_from_file('./weights/eval_10.0_2017-12-06T00:04:33.437222')
 
-    batch = trainer.make_batch_of_n_games_k_iterations(300, 10, log=True)
-    trainer.train_on_batch(batch)
-    print('testing:')
-    tester.test_vs_random(trainer.policy_net, 500)
-    batch = trainer.make_batch_of_n_games_k_iterations(300,10,log=True)
-    trainer.train_on_batch(batch)
-    print('testing:')
-    tester.test_vs_random(trainer.policy_net, 500)
+    for i in range(10):
+        log_file=open(log_filename, 'a')
+        log_file.write("+++Batch {}+++\n".format(i+1))
+        log_file.close()
+        print("++++++++running batch {} +++++++++++".format(i))
+        batch = trainer.make_batch_of_n_games_k_iterations(100, 50, log=True)
+        trainer.train_on_batch(batch)
+        print('testing:')
+        tester.test_vs_random(trainer.policy_net, 500)
 
-    print('testing:')
-    tester.test_vs_random(trainer.policy_net, 200)
+        print(100.0 * move_dict.keys_added / float(move_dict.keys_accessed), '% new keys')
+        #move_dict.save()
+        log_file=open(log_filename, 'a')
+        #log_file.write("{}% new keys\n".format(100.0 * move_dict.keys_added / float(move_dict.keys_accessed)))
+        log_file.close()
 
     trainer.policy_net.write_weights_to_file(policy_path)
     trainer.eval_net.write_weights_to_file(eval_path)
     print('written to', policy_path)
     print('written to', eval_path)
-    #log_file.write("written to: {}\nwritten to: {}".format(policy_path, eval_path))
-
-    print(100.0 * move_dict.keys_added / float(move_dict.keys_accessed), '% new keys')
+    with open(log_filename, 'a') as f:
+        f.write("written to: {}\nwritten to: {}\n".format(policy_path, eval_path))
+        f.close()
+    #print(100.0 * move_dict.keys_added / float(move_dict.keys_accessed), '% new keys')
     #move_dict.save()
 
     #log_file.write("{}% new keys".format(100.0 * move_dict.keys_added / float(move_dict.keys_accessed)))
     #move_dict.save()
-    #log_file.close()
+    log_file.close()
 
 if  __name__ =='__main__':main()

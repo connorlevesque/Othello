@@ -1,0 +1,43 @@
+hello
++++Batch 1+++
+draws_wins1_wins2 = [18, 290, 192]
+p1 win% = 57.99999999999999%
+71.33515199290309% new keys
++++Batch 2+++
+draws_wins1_wins2 = [13, 262, 225]
+p1 win% = 52.400000000000006%
+71.43808314764344% new keys
++++Batch 3+++
+draws_wins1_wins2 = [13, 252, 235]
+p1 win% = 50.4%
+70.72761313084663% new keys
++++Batch 4+++
+draws_wins1_wins2 = [14, 281, 205]
+p1 win% = 56.2%
+70.43224226496778% new keys
++++Batch 5+++
+draws_wins1_wins2 = [14, 267, 219]
+p1 win% = 53.400000000000006%
+69.04818417788799% new keys
++++Batch 6+++
+draws_wins1_wins2 = [16, 268, 216]
+p1 win% = 53.6%
+67.17647490918347% new keys
++++Batch 7+++
+draws_wins1_wins2 = [15, 284, 201]
+p1 win% = 56.8%
+67.22192889880685% new keys
++++Batch 8+++
+draws_wins1_wins2 = [10, 287, 203]
+p1 win% = 57.4%
+66.49536334190147% new keys
++++Batch 9+++
+draws_wins1_wins2 = [9, 271, 220]
+p1 win% = 54.2%
+66.31162297886786% new keys
++++Batch 10+++
+draws_wins1_wins2 = [14, 282, 204]
+p1 win% = 56.39999999999999%
+65.8142341809379% new keys
+written to: ./weights/policy_1000_2017-12-08T00:29:09.873088
+written to: ./weights/eval_1000_2017-12-08T00:29:09.873088
